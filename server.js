@@ -86,11 +86,11 @@ const runPrompt = () => {
 					break;
 
 				case "Add Role":
-					songAndAlbumSearch();
+					addRole();
 					break;
 
 				case "View all Departments":
-					songAndAlbumSearch();
+					viewAllDepartments();
 					break;
 
 				case "Add Department":
@@ -273,119 +273,69 @@ const viewAllRoles = () => {
 	});
 };
 
-function multiSearch() {
-	const query = "SELECT artist FROM top5000 GROUP BY artist HAVING count(*) > 1";
-	connection.query(query, function (err, res) {
-		for (const i = 0; i < res.length; i++) {
-			console.log(res[i].artist);
-		}
-		runSearch();
-	});
-}
-
-function rangeSearch() {
-	inquirer
-		.prompt([
+/**
+ * Inquire of the user the information for the role
+ */
+const addRole = () => {
+	//Get the list of roles to use in our questions
+	let role = new Role();
+	role.viewAllRoles(connection, roles => {
+		const questions = [
 			{
-				name: "start",
-				type: "input",
-				message: "Enter starting position: ",
-				validate: function (value) {
-					if (isNaN(value) === false) {
-						return true;
-					}
-					return false;
-				}
+				type: 'input',
+				message: 'What is the Employee\'s First Name',
+				name: 'firstName',
 			},
 			{
-				name: "end",
-				type: "input",
-				message: "Enter ending position: ",
-				validate: function (value) {
-					if (isNaN(value) === false) {
-						return true;
-					}
-					return false;
-				}
+				type: 'input',
+				message: 'What is the Employee\'s Last Name',
+				name: 'lastName',
+			},
+		];
+		//Add Roles to questions
+		questions.push(
+			{
+				type: 'rawlist',
+				message: 'What is the Employee\'s Role?',
+				name: 'role',
+				choices: roles.map(role => {return {name: role.title, value: role}; }),
 			}
-		])
-		.then(function (answer) {
-			const query = "SELECT position,song,artist,year FROM top5000 WHERE position BETWEEN ? AND ?";
-			connection.query(query, [answer.start, answer.end], function (err, res) {
-				for (const i = 0; i < res.length; i++) {
-					console.log(
-						"Position: " +
-						res[i].position +
-						" || Song: " +
-						res[i].song +
-						" || Artist: " +
-						res[i].artist +
-						" || Year: " +
-						res[i].year
-					);
-				}
-				runSearch();
-			});
-		});
-}
-
-function songSearch() {
-	inquirer
-		.prompt({
-			name: "song",
-			type: "input",
-			message: "What song would you like to look for?"
-		})
-		.then(function (answer) {
-			console.log(answer.song);
-			connection.query("SELECT * FROM top5000 WHERE ?", { song: answer.song }, function (err, res) {
-				console.log(
-					"Position: " +
-					res[0].position +
-					" || Song: " +
-					res[0].song +
-					" || Artist: " +
-					res[0].artist +
-					" || Year: " +
-					res[0].year
+		);
+		let emp = new Employee();
+		emp.viewAllEmployees(connection, employees => {
+			//Add employees to questions (to select manager)
+			if(employees.length > 0)
+				questions.push(
+					{
+						type: 'rawlist',
+						message: 'Who is the Employee\'s Manager?',
+						name: 'manager',
+						choices: employees.map(employee => {return {name:  employee.first_name + ' ' + employee.last_name, value: employee} }),
+					}
 				);
-				runSearch();
-			});
-		});
-}
+			inquirer.prompt(questions).then( answer => {
+				//insert employee, run prompt again
+				emp.firstName = answer.firstName;
+				emp.lastName = answer.lastName;
+				emp.roleId = answer.role.id;
+				if(answer.manager)
+					emp.managerId = answer.manager.id;
+				else
+					emp.managerId = null;
 
-function songAndAlbumSearch() {
-	inquirer
-		.prompt({
-			name: "artist",
-			type: "input",
-			message: "What artist would you like to search for?"
+				emp.addEmployee(connection, runPrompt);
+			});
 		})
-		.then(function (answer) {
-			const query = "SELECT top_albums.year, top_albums.album, top_albums.position, top5000.song, top5000.artist ";
-			query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
-			query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year, top_albums.position";
+	});
+};
 
-			connection.query(query, [answer.artist, answer.artist], function (err, res) {
-				console.log(res.length + " matches found!");
-				for (const i = 0; i < res.length; i++) {
-					console.log(
-						i + 1 + ".) " +
-						"Year: " +
-						res[i].year +
-						" Album Position: " +
-						res[i].position +
-						" || Artist: " +
-						res[i].artist +
-						" || Song: " +
-						res[i].song +
-						" || Album: " +
-						res[i].album
-					);
-				}
-
-				runSearch();
-			});
-		});
-}
-
+/**
+ * Retrieve and dispaly all the departments
+ */
+const viewAllDepartments = () => {
+	let dept = new Department();
+	dept.viewAllDepartments(connection, (depts) => {
+		outputDepartments(depts);
+		runPrompt();
+	});
+};
