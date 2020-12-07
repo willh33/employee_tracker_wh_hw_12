@@ -21,3 +21,23 @@ CREATE TABLE employee (
 	role_id INT REFERENCES role(id),
 	manager_id INT REFERENCES employee(id)
 );
+
+INSERT INTO department 
+(name)
+VALUES 
+("Sales"),
+("Engineering"),
+("Finance"),
+("Legal");
+
+
+INSERT INTO role 
+(title, salary, department_id)
+VALUES 
+("Sale Lead", 12, 1),
+("Salesperson", 9, 1),
+("Lead Engineer", 12, 2),
+("Software Engineer", 9, 2),
+("Account Manager", 12, 3),
+("Accountant", 9, 3),
+("Legal Team Lead", 12, 4);
