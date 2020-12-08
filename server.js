@@ -40,6 +40,9 @@ connection.connect(function (err) {
 	runPrompt();
 });
 
+/**
+ * Beginning prompt that asks the user what action they want to take, view, add, update employees, view add roles, and view add departments
+ */
 const runPrompt = () => {
 	inquirer
 		.prompt({
@@ -64,6 +67,7 @@ const runPrompt = () => {
 			]
 		})
 		.then(function (answer) {
+			//Switch statement for each of the possible actions
 			switch (answer.action) {
 				case "View All Employees":
 					viewAllEmployees();
