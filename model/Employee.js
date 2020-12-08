@@ -83,12 +83,12 @@ class Employee {
 		);
 	}
 
-	updateEmployeeRole(connection, roleId, callback) {
+	updateEmployeeRole(connection, id, roleId, callback) {
 		const query = connection.query(
             "UPDATE employee SET ? WHERE ?",
             [
               { role_id: roleId },
-              { id: this.id },
+              { id: id },
             ],
             function(err) {
               if (err) throw err;
@@ -97,12 +97,12 @@ class Employee {
 		);
 	}
 
-	updateEmployeeManager(connection, managerId, callback) {
+	updateEmployeeManager(connection, id, managerId, callback) {
 		const query = connection.query(
             "UPDATE employee SET ? WHERE ?",
             [
               { manager_id: managerId },
-              { id: this.id },
+              { id: id },
             ],
             function(err) {
               if (err) throw err;

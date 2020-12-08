@@ -249,6 +249,7 @@ const updateEmployeeRole = () => {
 			}
 		]).then(answer => {
 			let role = new Role();
+			let employeeId = answer.employee.id;
 			let employee = new Employee(answer.employee.first_name, answer.employee.last_name, answer.employee.role_id, answer.employee.manager_id);
 			//Get the roles and ask which role they want the selected employee to have.
 			role.viewAllRoles(connection, roles => {
@@ -262,7 +263,9 @@ const updateEmployeeRole = () => {
 							choices: roles.map(role => { return {name: role.title, value: role} })
 						}
 				]).then(answer => {
-					employee.updateEmployeeRole(connection, answer.newRole.id, () => { 
+					let employee = new Employee();
+					let newRoleId = answer.newRole.id;
+					employee.updateEmployeeRole(connection, employeeId, newRoleId, () => { 
 						console.log("\nSuccessfully updated employee's role!\n"); 
 						runPrompt(); 
 					});
@@ -299,9 +302,11 @@ const updateEmployeeManager = () => {
 				choices: employees.map(employee => { return {name: employee.first_name + ' ' + employee.last_name, value: employee} })
 			}
 		]).then(answer => {
-			let employee = new Employee(answer.employee.first_name, answer.employee.last_name, answer.employee.role_id, answer.newManager.id);
+			let id = answer.employee.id;
+			let newManagerId = answer.newManager.id;
+			let employee = new Employee();
 			
-			employee.updateEmployeeManager(connection, employee.managerId, () => { 
+			employee.updateEmployeeManager(connection, id, newManagerId, () => { 
 				console.log("\nSuccessfully updated employee's manager!\n"); 
 				runPrompt(); 
 			});
