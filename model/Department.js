@@ -3,19 +3,19 @@ class Department {
 		this.name = name;
 	}
 
-	viewAllDepartments(connection) {
+	viewAllDepartments(connection, callback) {
 		const query = connection.query("SELECT * FROM department", this,
 			function (err, res) {
 				if (err) throw err;
-				return res;
+				callback(res);
 			});
 	}
 
-	addDepartment(connection) {
+	addDepartment(connection, callback) {
 		const query = connection.query("INSERT INTO department SET ?", this,
 			function (err, res) {
 				if (err) throw err;
-				return res;
+				callback();
 			});
 	}
 
@@ -36,6 +36,4 @@ class Department {
 	}
 }
 
-module.exports = {
-	Department
-};
+module.exports = Department;

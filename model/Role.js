@@ -19,11 +19,16 @@ class Role {
 			});
 	}
 
-	addRole(connection) {
-		const query = connection.query("INSERT INTO role SET ?", this,
+	addRole(connection, callback) {
+		const query = connection.query("INSERT INTO role SET ?", 
+			{
+				title: this.title,
+				salary: this.salary,
+				department_id: this.departmentId
+			},
 			function (err, res) {
 				if (err) throw err;
-				return res;
+				callback();
 			});
 	}
 
