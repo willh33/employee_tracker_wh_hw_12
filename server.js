@@ -117,6 +117,10 @@ const runPrompt = () => {
 		});
 }
 
+/**
+ * Formats that employees in a readable format and logs it to the console
+ * @param {*} employees 
+ */
 const outputEmployees = (employees) => {
 	console.log('\n');
 	console.log(`id   first_name    last_name     title                 department         salary   manager`);
@@ -135,6 +139,10 @@ const outputEmployees = (employees) => {
 	console.log('\n');
 };
 
+/**
+ * Formats that roles in a readable format and logs it to the console
+ * @param {*} employees 
+ */
 const outputRoles = (roles) => {
 	console.log('\n');
 	console.log(`id   title                 salary   department`);
@@ -150,6 +158,10 @@ const outputRoles = (roles) => {
 	console.log('\n');
 };
 
+/**
+ * Formats that departments in a readable format and logs it to the console
+ * @param {*} employees 
+ */
 const outputDepartments = (depts) => {
 	console.log('\n');
 	console.log(`id   department`);
@@ -163,6 +175,9 @@ const outputDepartments = (depts) => {
 	console.log('\n');
 };
 
+/**
+ * Retrieve all employees and display them
+ */
 const viewAllEmployees = () => {
 	let emp = new Employee();
 	emp.viewAllEmployees(connection, (rows) => {
